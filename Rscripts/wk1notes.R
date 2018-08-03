@@ -79,6 +79,7 @@ X - Y
 # X * Y is not matrix multilication
 X %*% Y
 X / Y
+
 # https://www.khanacademy.org/math/linear-algebra/matrix-transformations/matrix-transpose/v/linear-algebra-transpose-of-a-matrix
 t(X)
 #Z = matrix(c(2, -5, 7, -2, 4, -6), 2, 3, byrow = TRUE))
@@ -121,7 +122,7 @@ b_vec = c(2, 2, 2)
 c(is.vector(a_vec), is.vector(b_vec))
 
 # %*% dot product, inner product
-a_vec %*% b_vec # inner product = 12 = 1*2 + 282 + 3*2
+a_vec %*% b_vec # inner product = 12 = 1*2 + 2*2 + 3*2
 a_vec %o% b_vec # outer product 
 ##      [,1] [,2] [,3]
 ## [1,]    2    2    2

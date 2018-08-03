@@ -1,4 +1,6 @@
 # 8.2 Sampling Distributions
+stop_dist_model = lm(dist ~ speed, data = cars)
+
 summary(stop_dist_model)
 
 plot(dist ~ speed, data = cars,
@@ -243,6 +245,19 @@ summary(sim_fit)$coefficients["predictor", "Pr(>|t|)"]
 plot(response ~ predictor, data = sim_data, pch = 20, col = "gray", cex = 1.5)
 abline(sim_fit, col = "darkorange", lwd = 3)
 abline(2, 0, lwd = 3, lty = 2, col = "dodgerblue")
+
+
+# 8.10 Significance of Regression, F-Test
+summary(stop_dist_model)
+# we will reject the null when the  F statistic is large,
+
+anova(stop_dist_model)
+
+9.464 ^ 2
+# t-value squared = F statistics
+
+anova(lm(dist ~ 1, data = cars), lm(dist ~ speed, data = cars))
+# directly comparing the two models
 
 
 # https://rpubs.com/aaronsc32/regression-confidence-prediction-intervals

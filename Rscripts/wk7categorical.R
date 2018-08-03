@@ -252,7 +252,8 @@ legend("topright", c("4 Cylinder", "6 Cylinder", "8 Cylinder"),
 
 anova(mpg_disp_add_cyl, mpg_disp_int_cyl)
 
-# df1 = n- p & df2 = n - q 
+# df1 = n- p & df2 = n - q wrong
+# df1 = p - q df2 = n - p 
 nrow(autompg) - length(coef(mpg_disp_int_cyl))
 nrow(autompg) - length(coef(mpg_disp_add_cyl))
 
@@ -275,7 +276,13 @@ lm(y ~ 0 + x + v1 + v2 + v3, data = new_param_data)
 # intercept and slope for each line
 lm(y ~ 0 + v1 + v2 + v3 + x:v1 + x:v2 + x:v3, data = new_param_data)
 
+# reference intercept and slope
 lm(mpg ~ disp * cyl, data = autompg)
+# separate intercept and slope
+lm(mpg ~ 0 + cyl + disp:cyl, data = autompg)
+# separate intercept but reference slop
+lm(mpg ~ 0 + disp * cyl, data = autompg)
+# separate intercept but reference slop
 lm(mpg ~ 0 + disp + cyl + disp : cyl, data = autompg)
 
 

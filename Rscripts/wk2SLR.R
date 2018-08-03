@@ -42,7 +42,132 @@ dbinom(x = 10, size = 10, prob = 0.75)  # n and p, size and prob
 
 dname
 
+# The probability of flipping an unfair coin 10 times and seeing 6 heads
+# if the probability of heads is 0.75
+bdinom(x = 6, size = 10, prob = 0.75)
+
+# 5.2 Hypothesis Tests in R
+# one sample t-test
+# H0: mu >= 16 vs H1 mu < 16
+capt_crisp = data.frame(weight = c(15.5, 16.2, 16.1, 15.8, 15.6, 16.0, 15.8, 15.9, 16.2))
+x_bar = mean(capt_crisp$weight)
+s = sd(capt_crisp$weight)
+mu_0 = 16
+n = 9
+
+# compute the t statistic (one-sided test with a less-than alternative)
+t = (x_bar - mu_0) / (s / sqrt(n))
+t
+pt(t, df = n -1)  # > alpha 0.05, fail to reject
+
+# one-line code, one-sided ci
+t.test(x = capt_crisp$weight, mu = 16, alternative = c("less"), conf.level = 0.95)
+
+# two-sided
+capt_test_results = t.test(capt_crisp$weight, mu = 16, alternative = c("two.sided"), conf.level = 0.95)
+names(capt_test_results)
+capt_test_results$conf.int
+qt(0.975, df = 8)
+c(mean(capt_crisp$weight) - qt(0.975, df = 8) * sd(capt_crisp$weight) / sqrt(9),
+  mean(capt_crisp$weight) + qt(0.975, df = 8) * sd(capt_crisp$weight) / sqrt(9))
+
+# two sample t-test
+# H0: mu1 = mu2 vs H1: mu1 > mu2
+x = c(70, 82, 78, 74, 94, 82)
+n = length(x)
+
+
+y =  c(64, 72, 60, 76, 72, 80, 84, 68)
+m = length(y)
+
+x_bar = mean(x)
+s_x = sd(x)
+y_bar = mean(y)
+s_y = sd(y)
+
+#  pooled standard deviation
+s_p = sqrt(((n-1) * s_x ^ 2 + (m-1) * s_y ^ 2 ) / (n + m - 2))
+
+t = ((x_bar - y_bar) - 0) / (s_p * sqrt(1 / n + 1 / m))
+t  
+# we're testing >, so 1- or use lower.tail = FALSE
+1 - pt(t, df = n + m - 2)
+# same as 
+pt(t, df = n + m - 2, lower.tail = FALSE)
+
+
+# one-line code
+t.test(x, y, alternative = c("greater"), var.equal = TRUE)
+
+t_test_data = data.frame(values = c(x, y), group = c(rep("A", length(x)), rep("B", length(y))))
+t_test_data
+
+t.test(values ~ group, data = t_test_data, 
+       alternative = c("greater"), var.equal = TRUE)
+
+# 5.3 Simulation
+
+# 5.3.1 Paired Differences
+# mu1 = 6, mu2 = 5, sigma = 2, n = 25  
+pnorm(2, mean = 1, sd = sqrt(0.32)) - pnorm(0, mean = 1, sd = sqrt(0.32))
+
+set.seed(42)
+num_samples = 10000
+differences = rep(0, num_samples)
+for (s in 1:num_samples){
+  x1 = rnorm(n = 25, mean = 6, sd = 2)
+  x2 = rnorm(n = 25, mean = 5, sd = 2)
+  differences[s] = mean(x1) - mean(x2)
+}
+
+# the porportion of ds between 0 and 2
+mean(0 < differences & differences < 2)
+
+hist(differences, breaks = 20,
+     main = "Empirical Distribution of D",
+     xlab = "Simulated Values of D",
+     col = "dodgerblue",
+     border = "darkorange")
+mean(differences)
+var(differences)
+
+set.seed(42)
+diffs = replicate(10000, mean(rnorm(25, 6, 2)) -  mean(rnorm(25, 5, 2)))
+mean(differences == diffs)
+
+# 5.3.2 Distribution of a Sample Mean
+set.seed(1337)
+mu = 10
+sample_size = 50
+samples = 100000
+x_bars = rep(0, samples)
+
+for (i in 1:samples){
+  x_bars[i] = mean(rpois(sample_size, lambda = mu))
+}
+
+x_bar_hist = hist(x_bars, breaks = 50, 
+                  main = "Histogram of Sample Means",
+                  xlab = "Sample Means")
+# compare empirical distribution and known parent distribution
+c(mean(x_bars), mu)
+c(var(x_bars), mu / sample_size)
+c(sd(x_bars), sqrt(mu) / sqrt(sample_size))
+
+#  the proportion of sample means that are within 2 standard deviations of the population mean
+mean(x_bars > mu - 2 * sqrt(mu) / sqrt(sample_size) &
+       x_bars < mu + 2 * sqrt(mu) / sqrt(sample_size))
+
+shading = ifelse(x_bar_hist$breaks > mu - 2 * sqrt(mu) / sqrt(sample_size) &
+                   x_bar_hist$breaks < mu + 2 * sqrt(mu) / sqrt(sample_size),
+                 "darkorange", "dodgerblue")
+
+x_bar_hist = hist(x_bars, breaks = 50, col = shading,
+                  main = "Histogram of Sample Means, Two Standard Deviations",
+                  xlab = "Sample Means")
+
 #7.1 Modeling
+
 View(cars)
 str(cars)
 dim(cars)
